@@ -25,6 +25,10 @@ float sigmoid(float x){
     return exp(x)/(exp(x)+1);
 }
 
+float sigmoidDerivative(float x){
+    return x * (1.0 - x);
+}
+
 vector<vector<Node>> propagate(vector<int> inputs,vector<vector<Node>> network){
     for(int i=0;i<inputs.size();i++){
         network[0][i].value+=inputs[i];
