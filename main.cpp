@@ -8,13 +8,14 @@
 #include <cmath>
 using namespace std;
 
-struct Edge;
-struct Node;
-struct Node{
-    vector<Edge> edges;
-    float value=0;
-    float delta;
-};
+float sigmoid(float val){
+    return 1/(1+exp(-val));
+}
+
+float sigma(float val){
+    return val*(1-val);
+}
+
 struct Edge{
     float weight;
     Edge(float w){
@@ -22,93 +23,65 @@ struct Edge{
     }
 };
 
-float activation(float x){
-//    return x;
-    return exp(x)/(exp(x)+1);
-}
-
-float derivative(float x){
-//    return 1;
-    return x * (1.0 - x);
-}
-
-vector<vector<Node>> propagate(vector<int> inputs,vector<vector<Node>> network){
-    for(int i=0;i<inputs.size();i++){
-        network[0][i].value+=inputs[i];
+struct Vertex{
+    float value;
+    float delta;
+    vector<Edge> edges;
+    Vertex(float v){
+        value=v;
     }
-    for(int x=0;x<network.size()-1;x++){
+};
+
+struct Data{
+    vector<float> input;
+    vector<float> output;
+    Data(vector<float> i,vector<float> o){
+        input=i;
+        output=o;
+    }
+};
+
+void display(vector<vector<Vertex>> network){
+    for(int x=0;x<network.size();x++){
         for(int y=0;y<network[x].size();y++){
-            network[x][y].value=activation(network[x][y].value);
-            for(int i=0;i<network[x][y].edges.size();i++){
-                network[x+1][i].value+=(network[x][y].edges)[i].weight*network[x][y].value;
-            }
-        }
-    }
-    
-    for(int i=0;i<network[network.size()-1].size();i++){
-        network[network.size()-1][i].value=activation(network[network.size()-1][i].value);
-    }
-    return network;
-}
-
-vector<vector<Node>> backpropagate(vector<float> expected,vector<vector<Node>> network){
-    for(int x=network.size()-1;x>=0;x--){
-        vector<float> errors;
-        if(x==network.size()-1){
-            for(int y=0;y<network[x].size();y++){
-                errors.push_back(pow(expected[y]-network[x][y].value,2));
-            }
-        }else{
-            for(int y=0;y<network[x].size();y++){
-                float err=0;
-                for(int i=0;i<network[x+1].size();i++){
-                    err+=(network[x+1][i].);
-                }
-            }
-        }
-    }
-}
-/*
-vector<float> error(vector<vector<Node>> network, vector<int> outputs){
-    vector<float> cost;
-    for(int i=0;i<network[network.size()-1].size();i++){
-        cost.push_back(pow(network[network.size()-1][i].value-outputs[i],2));
-    }
-    return cost;
-}*/
-
-void print(vector<vector<Node>> result){
-    for(int x=result.size()-1;x>=0;x--){
-        for(int y=0;y<result[x].size();y++){
-            cout << result[x][y].value << " ";
+            cout << network[x][y].value << " ";
         }
         cout << endl;
     }
 }
 
 int main(){
-    vector<vector<Node>> network;
-    vector<int> model={3,3,1};
-    for(int x=0;x<model.size();x++){
+    vector<vector<Vertex>> network;
+    vector<int> config={3,3,1};
+    for(int x=0;x<config.size();x++){
         network.push_back({});
-        for(int y=0;y<model[x];y++){
-            network[x].push_back(Node());
-        }
-    }
-    for(int x=0;x<network.size()-1;x++){
-        for(int y=0;y<network[x].size();y++){
-            for(int i=0;i<network[x+1].size();i++){
-                (network[x][y].edges).push_back(Edge(1));
+        for(int y=0;y<config[x];y++){
+            network[x].push_back(Vertex(0));
+            if(x!=0){
+                for(int i=0;i<network[x-1].size();i++){
+                    float randomWeight=float(random()%1000)/500-1;
+                    network[x][y].edges.push_back(Edge(randomWeight));
+                }
             }
         }
     }
-    vector<vector<Node>> result=propagate({1,2,3},network);/*
-    vector<float> cost=error(result,{3});
-    for(int i=0;i<cost.size();i++){
-        result[result.size()-1][i].delta=cost[i];
-    }*/
-    print(result);
-    result=backpropagate({3},result);
-    print(result);
+    display(network);
+    vector<Data> dataSet;
+    for(int i=0;i<10;i++){
+        vector<float> test;
+        float solution=0;
+        for(int k=0;k<3;k++){
+            float randomNumber=float(random()%3)+1;
+            test.push_back(randomNumber);
+            solution=max(randomNumber,solution);
+        }
+        dataSet.push_back(Data(test,{solution}));
+    }
+    for(int i=0;i<dataSet.size();i++){
+        for(int k=0;k<dataSet[i].input.size();k++){
+            cout << dataSet[i].input[k] << " ";
+        }
+        cout << "= "<<dataSet[i].output[0] << endl;
+    }
     return 0;
 }
