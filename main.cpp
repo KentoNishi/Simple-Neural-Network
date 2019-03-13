@@ -65,6 +65,10 @@ vector<vector<Vertex>> forwardPropagate(vector<vector<Vertex>> network,vector<fl
     return network;
 }
 
+vector<vector<Vertex>> backPropagate(vector<vector<Vertex>>* network,vector<float> output){
+    
+}
+
 void cost(vector<vector<Vertex>>* network,vector<float> output){
     for(int i=0;i<(*network)[(*network).size()-1].size();i++){
         Vertex* node=&(*network)[(*network).size()-1][i];
@@ -109,6 +113,7 @@ int main(){
         vector<vector<Vertex>> result=forwardPropagate(network,dataSet[i].input);
         cost(&result,dataSet[i].output);
         display(result);
+        backPropagate(&result,dataSet[i].output);
         cout << endl;
     }
     return 0;
