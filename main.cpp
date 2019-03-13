@@ -24,8 +24,8 @@ struct Edge{
 };
 
 struct Vertex{
-    float value;
-    float delta;
+    float value=0;
+    float delta=0;
     vector<Edge> edges;
     Vertex(float v){
         value=v;
@@ -65,8 +65,8 @@ vector<vector<Vertex>> forwardPropagate(vector<vector<Vertex>> network,vector<fl
     return network;
 }
 
-vector<vector<Vertex>> backPropagate(vector<vector<Vertex>>* network,vector<float> output){
-    
+void backPropagate(vector<vector<Vertex>>* network,vector<float> input){
+    return;
 }
 
 void cost(vector<vector<Vertex>>* network,vector<float> output){
