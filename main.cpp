@@ -44,9 +44,31 @@ struct Data{
 void display(vector<vector<Vertex>> network){
     for(int x=0;x<network.size();x++){
         for(int y=0;y<network[x].size();y++){
-            cout << network[x][y].value << " ";
+            cout << "(V: "<<network[x][y].value <<", D: "<<network[x][y].delta<<")"<< " ";
         }
         cout << endl;
+    }
+}
+
+vector<vector<Vertex>> forwardPropagate(vector<vector<Vertex>> network,vector<float> input){
+    for(int i=0;i<network[0].size();i++){
+        network[0][i].value=sigmoid(input[i]);
+    }
+    for(int x=1;x<network.size();x++){
+        for(int y=0;y<network[x].size();y++){
+            for(int k=0;k<network[x-1].size();k++){
+                network[x][y].value+=network[x-1][k].value;
+            }
+            network[x][y].value=sigmoid(network[x][y].value);
+        }
+    }
+    return network;
+}
+
+void cost(vector<vector<Vertex>>* network,vector<float> output){
+    for(int i=0;i<(*network)[(*network).size()-1].size();i++){
+        Vertex* node=&(*network)[(*network).size()-1][i];
+        (*node).delta=(output[i]-(*node).value)*sigma((*node).value);
     }
 }
 
@@ -65,7 +87,6 @@ int main(){
             }
         }
     }
-    display(network);
     vector<Data> dataSet;
     for(int i=0;i<10;i++){
         vector<float> test;
@@ -82,6 +103,13 @@ int main(){
             cout << dataSet[i].input[k] << " ";
         }
         cout << "= "<<dataSet[i].output[0] << endl;
+    }
+    cout << endl;
+    for(int i=0;i<dataSet.size();i++){
+        vector<vector<Vertex>> result=forwardPropagate(network,dataSet[i].input);
+        cost(&result,dataSet[i].output);
+        display(result);
+        cout << endl;
     }
     return 0;
 }
