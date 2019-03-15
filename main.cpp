@@ -35,6 +35,24 @@ void initNet(int inputSize, int hiddenSize, int outputSize){
     network.push_back(outputLayer);
 }
 
+void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSize){
+    for(int x=0;x<network.size();x++){
+        for(int y=0;y<network[x].size();y++){
+            cout << network[x][y].output << " ";
+        }
+        cout << endl;
+        for(int y=0;y<network[x].size();y++){
+            cout << "[ ";
+            for(int i=0;i<network[x][y].weights.size();i++){
+                int maximum=network[x][y].weights.size()-1;
+                cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
+            }
+            cout << "] ";
+        }
+        cout << endl;
+    }
+}
+
 int main(){
     vector<vector<float>> dataset = {
         {2.7810836,2.550537003,0},
@@ -56,20 +74,6 @@ int main(){
     int outputSize=outputTypes.size();
     int hiddenSize=2;
     initNet(inputSize,hiddenSize,outputSize);
-    for(int x=0;x<network.size();x++){
-        for(int y=0;y<network[x].size();y++){
-            cout << network[x][y].output << " ";
-        }
-        cout << endl;
-        for(int y=0;y<network[x].size();y++){
-            cout << "[ ";
-            for(int i=0;i<network[x][y].weights.size();i++){
-                int maximum=network[x][y].weights.size()-1;
-                cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
-            }
-            cout << "] ";
-        }
-        cout << endl;
-    }
+    trainNet(dataset,0.5,20,outputSize);
     return 0;
 }
