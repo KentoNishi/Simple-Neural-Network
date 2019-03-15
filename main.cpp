@@ -36,20 +36,26 @@ void initNet(int inputSize, int hiddenSize, int outputSize){
 }
 
 void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSize){
-    for(int x=0;x<network.size();x++){
-        for(int y=0;y<network[x].size();y++){
-            cout << network[x][y].output << " ";
-        }
-        cout << endl;
-        for(int y=0;y<network[x].size();y++){
-            cout << "[ ";
-            for(int i=0;i<network[x][y].weights.size();i++){
-                int maximum=network[x][y].weights.size()-1;
-                cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
+    for(int iter=0;iter<epoch;iter++){
+        float errorSum=0;
+        for(int set=0;set<dataset.size();set++){
+            
+            for(int x=0;x<network.size();x++){
+                for(int y=0;y<network[x].size();y++){
+                    cout << network[x][y].output << " ";
+                }
+                cout << endl;
+                for(int y=0;y<network[x].size();y++){
+                    cout << "[ ";
+                    for(int i=0;i<network[x][y].weights.size();i++){
+                        int maximum=network[x][y].weights.size()-1;
+                        cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
+                    }
+                    cout << "] ";
+                }
+                cout << endl;
             }
-            cout << "] ";
         }
-        cout << endl;
     }
 }
 
