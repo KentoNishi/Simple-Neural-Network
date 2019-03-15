@@ -4,5 +4,7 @@
         "cmath": "cpp",
         "iostream": "cpp",
         "ostream": "cpp"
-    }
+    },
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
