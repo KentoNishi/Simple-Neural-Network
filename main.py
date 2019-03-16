@@ -97,6 +97,6 @@ dataset = [[2.7810836,2.550537003,0],
 n_inputs = len(dataset[0]) - 1
 n_outputs = len(set([row[-1] for row in dataset]))
 network = initialize_network(n_inputs, 2, n_outputs)
-train_network(network, dataset, 0.5, 20, n_outputs)
+train_network(network, dataset, 0.5, 10000, n_outputs)
 #for layer in network:
 #	print(layer)

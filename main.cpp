@@ -71,20 +71,30 @@ void backwardPropagate(vector<float> expected){
     }
 }
 
-void initNet(int inputSize, int hiddenSize, int outputSize){
-    vector<Node> hiddenLayer;
-    for(int i=0;i<hiddenSize;i++){
-        hiddenLayer.push_back(Node());
-        for(int k=0;k<=inputSize;k++){
-            hiddenLayer[i].weights.push_back(2*((rand()%100)/50-0.5));
+float randomFloat(){
+    float randomNum=float(rand()%10000000)/5000000-1;
+    return randomNum;
+}
+
+void initNet(int inputSize, int hiddenCount, int hiddenSize, int outputSize){
+    vector<vector<Node>> hiddenLayers;
+    for(int layer=0;layer<hiddenCount;layer++){
+        hiddenLayers.push_back({});
+        for(int i=0;i<hiddenSize;i++){
+            hiddenLayers[layer].push_back(Node());
+            for(int k=0;k<=inputSize;k++){
+                hiddenLayers[layer][i].weights.push_back(randomFloat());
+            }
         }
     }
-    network.push_back(hiddenLayer);
+    for(int i=0;i<hiddenLayers.size();i++){
+        network.push_back(hiddenLayers[i]);
+    }
     vector<Node> outputLayer;
     for(int i=0;i<outputSize;i++){
         outputLayer.push_back(Node());
         for(int k=0;k<=hiddenSize;k++){
-            outputLayer[i].weights.push_back(2*((rand()%100)/50-0.5));
+            outputLayer[i].weights.push_back(randomFloat());
         }
     }
     network.push_back(outputLayer);
@@ -118,8 +128,9 @@ void updateWeights(vector<float> data, float rate){
 }
 
 void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSize){
-    for(int iter=0;iter<epoch;iter++){
-        float errorSum=0;
+    float errorSum=-1;
+    for(int iter=0;epoch!=0?iter<epoch:errorSum==-1||errorSum>0.001;iter++){
+        errorSum=0;
         for(int set=0;set<dataset.size();set++){
             vector<float> outputs=forwardPropagate(dataset[set]);
             vector<float> expected=vector<float>(outputSize);
@@ -128,7 +139,7 @@ void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSi
             backwardPropagate(expected);
             updateWeights(dataset[set],rate);
         }
-        cout <<">Epoch: "<<epoch<<", Rate: "<<rate<<", Error: "<<errorSum<< errorSum << endl;
+        cout <<">Epoch: "<<iter<<", Rate: "<<rate<<", Error: "<<errorSum<< endl;
     }
 }
 
@@ -169,8 +180,11 @@ int main(){
         outputTypes.insert(dataset[i][dataset[i].size()-1]);
     }
     int outputSize=outputTypes.size();
+    int hiddenCount=1;
     int hiddenSize=2;
-    initNet(inputSize,hiddenSize,outputSize);
-    trainNet(dataset,0.5,20,outputSize);
+    initNet(inputSize,hiddenCount,hiddenSize,outputSize);
+    trainNet(dataset,0.5,10,outputSize);
+    cout << endl << endl;
+    trainNet({{2,1,1},{1,1,0}},0.5,1,outputSize);
     return 0;
 }
