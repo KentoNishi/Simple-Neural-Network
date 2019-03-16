@@ -128,7 +128,7 @@ void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSi
             backwardPropagate(expected);
             updateWeights(dataset[set],rate);
         }
-        cout <<"ERROR: "<< errorSum << endl;
+        cout <<">Epoch: "<<epoch<<", Rate: "<<rate<<", Error: "<<errorSum<< errorSum << endl;
     }
 }
 
