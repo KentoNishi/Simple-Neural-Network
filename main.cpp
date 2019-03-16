@@ -174,11 +174,11 @@ int main(){
         {8.675418651,-0.242068655,1},
         {7.673756466,3.508563011,1}
     };
-    int inputSize=dataset[0].size()-1;
     set<float> outputTypes;
     for(int i=0;i<dataset.size();i++){
         outputTypes.insert(dataset[i][dataset[i].size()-1]);
     }
+    int inputSize=dataset[0].size()-1;
     int outputSize=outputTypes.size();
     int hiddenCount=2;
     int hiddenSize=2;
@@ -186,22 +186,5 @@ int main(){
     copy(outputTypes.begin(), outputTypes.end(), outputVector.begin());
     initNet(inputSize,hiddenCount,hiddenSize,outputSize);
     trainNet(dataset,0.1,100000,0.001,outputSize);
-    cout << "Press ctrl+c to exit."<<endl;
-    while(true){
-        float number;
-        cout << "Enter a number [0,9] to determine if even or odd." <<endl;
-        cin >> number;
-        vector<float> test=forwardPropagate({number,transfer(number)});
-        cout << "Result was ";
-        float maximum=0;
-        int id=0;
-        for(int i=0;i<test.size();i++){
-            if(test[i]>maximum){
-                maximum=test[i];
-                id=i;
-            }
-        }
-        cout << (outputVector[id]) << " with value "<<test[id]<< endl;
-    }
     return 0;
 }
