@@ -127,9 +127,9 @@ void updateWeights(vector<float> data, float rate){
     }
 }
 
-void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSize){
+void trainNet(vector<vector<float>> dataset, float rate, int epoch, float minError,int outputSize){
     float errorSum=-1;
-    for(int iter=0;epoch!=0?iter<epoch:errorSum==-1||errorSum>0.001;iter++){
+    for(int iter=0;iter<epoch&&(errorSum==-1||errorSum>minError);iter++){
         errorSum=0;
         for(int set=0;set<dataset.size();set++){
             vector<float> outputs=forwardPropagate(dataset[set]);
@@ -180,11 +180,28 @@ int main(){
         outputTypes.insert(dataset[i][dataset[i].size()-1]);
     }
     int outputSize=outputTypes.size();
-    int hiddenCount=1;
+    int hiddenCount=2;
     int hiddenSize=2;
+    vector<float> outputVector=vector<float>(outputTypes.size());
+    copy(outputTypes.begin(), outputTypes.end(), outputVector.begin());
     initNet(inputSize,hiddenCount,hiddenSize,outputSize);
-    trainNet(dataset,0.5,10,outputSize);
-    cout << endl << endl;
-    trainNet({{2,1,1},{1,1,0}},0.5,1,outputSize);
+    trainNet(dataset,0.1,100000,0.001,outputSize);
+    cout << "Press ctrl+c to exit."<<endl;
+    while(true){
+        float number;
+        cout << "Enter a number [0,9] to determine if even or odd." <<endl;
+        cin >> number;
+        vector<float> test=forwardPropagate({number,transfer(number)});
+        cout << "Result was ";
+        float maximum=0;
+        int id=0;
+        for(int i=0;i<test.size();i++){
+            if(test[i]>maximum){
+                maximum=test[i];
+                id=i;
+            }
+        }
+        cout << (outputVector[id]) << " with value "<<test[id]<< endl;
+    }
     return 0;
 }
