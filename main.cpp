@@ -129,7 +129,7 @@ void updateWeights(vector<float> data, float rate){
 
 void trainNet(vector<vector<float>> dataset, float rate, int epoch, float minError,int outputSize){
     float errorSum=-1;
-    for(int iter=0;iter<epoch&&(errorSum==-1||errorSum>minError);iter++){
+    for(int iter=0;(iter<epoch||epoch==0)&&(errorSum==-1||errorSum>minError||minError==0);iter++){
         errorSum=0;
         for(int set=0;set<dataset.size();set++){
             vector<float> outputs=forwardPropagate(dataset[set]);
@@ -185,6 +185,6 @@ int main(){
     vector<float> outputVector=vector<float>(outputTypes.size());
     copy(outputTypes.begin(), outputTypes.end(), outputVector.begin());
     initNet(inputSize,hiddenCount,hiddenSize,outputSize);
-    trainNet(dataset,0.1,100000,0.001,outputSize);
+    trainNet(dataset,0.1,0,0.001,outputSize);
     return 0;
 }
