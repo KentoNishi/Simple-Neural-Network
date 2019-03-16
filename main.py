@@ -25,6 +25,7 @@ def transfer(activation):
 # Forward propagate input to a network output
 def forward_propagate(network, row):
 	inputs = row
+#	print(inputs)
 	for layer in network:
 		new_inputs = []
 		for neuron in layer:
@@ -95,8 +96,7 @@ dataset = [[2.7810836,2.550537003,0],
 	[7.673756466,3.508563011,1]]
 n_inputs = len(dataset[0]) - 1
 n_outputs = len(set([row[-1] for row in dataset]))
-print(n_outputs)
 network = initialize_network(n_inputs, 2, n_outputs)
 train_network(network, dataset, 0.5, 20, n_outputs)
-for layer in network:
-	print(layer)
+#for layer in network:
+#	print(layer)

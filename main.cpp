@@ -16,6 +16,61 @@ struct Node{
 
 vector<vector<Node>> network;
 
+float activate(vector<float> weights, vector<float> inputs){
+    float activation=weights[weights.size()-1];
+    for(int i=0;i<weights.size()-1;i++){
+        activation+=weights[i] * inputs[i];
+    }
+    return activation;
+}
+
+float transfer(float activation){
+    return 1/(1+exp(-activation));
+}
+
+float derivative(float out){
+    return out*(1-out);
+}
+
+vector<float> forwardPropagate(vector<float> inputs){/*
+    for(int i=0;i<inputs.size();i++){
+        cout << inputs[i] << " ";
+    }
+    cout << endl;*/
+    for(int x=0;x<network.size();x++){
+        vector<float> newInputs;
+        for(int y=0;y<network[x].size();y++){
+            float activation=activate(network[x][y].weights,inputs);
+            network[x][y].output=transfer(activation);
+            newInputs.push_back(network[x][y].output);
+        }
+        inputs=newInputs;
+    }
+    return inputs;
+}
+
+void backwardPropagate(vector<float> expected){
+    for(int x=network.size()-1;x>=0;x--){
+        vector<float> errors;
+        if(x!=network.size()-1){
+            for(int y=0;y<network[x].size();y++){
+                float error=0;
+                for(int k=0;k<network[x+1].size();k++){
+                    error+=network[x+1][k].weights[y]*network[x+1][k].delta;
+                }
+                errors.push_back(error);
+            }
+        }else{
+            for(int y=0;y<network[x].size();y++){
+                errors.push_back(expected[y]-network[x][y].output);
+            }
+        }
+        for(int y=0;y<network[x].size();y++){
+            network[x][y].delta=errors[y]*derivative(network[x][y].output);
+        }
+    }
+}
+
 void initNet(int inputSize, int hiddenSize, int outputSize){
     vector<Node> hiddenLayer;
     for(int i=0;i<hiddenSize;i++){
@@ -35,27 +90,63 @@ void initNet(int inputSize, int hiddenSize, int outputSize){
     network.push_back(outputLayer);
 }
 
+float cost(vector<float> expected,vector<float> outputs){
+    float total=0;
+    for(int i=0;i<expected.size();i++){
+        total+=pow(expected[i]-outputs[i],2);
+    }
+    return total;
+}
+
+void updateWeights(vector<float> data, float rate){
+    vector<float> inputs=data;
+    inputs.erase(inputs.end()-1);
+    for(int x=0;x<network.size();x++){
+        if(x!=0){
+            inputs={};
+            for(int k=0;k<network[x-1].size();k++){
+                inputs.push_back(network[x-1][k].output);
+            }
+        }
+        for(int y=0;y<network[x].size();y++){
+            for(int k=0;k<inputs.size();k++){
+                network[x][y].weights[k]+=rate*network[x][y].delta*inputs[k];
+            }
+            network[x][y].weights[network[x][y].weights.size()-1]+=rate*network[x][y].delta;
+        }
+    }
+}
+
 void trainNet(vector<vector<float>> dataset, float rate, int epoch, int outputSize){
     for(int iter=0;iter<epoch;iter++){
         float errorSum=0;
         for(int set=0;set<dataset.size();set++){
-            
-            for(int x=0;x<network.size();x++){
-                for(int y=0;y<network[x].size();y++){
-                    cout << network[x][y].output << " ";
-                }
-                cout << endl;
-                for(int y=0;y<network[x].size();y++){
-                    cout << "[ ";
-                    for(int i=0;i<network[x][y].weights.size();i++){
-                        int maximum=network[x][y].weights.size()-1;
-                        cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
-                    }
-                    cout << "] ";
-                }
-                cout << endl;
-            }
+            vector<float> outputs=forwardPropagate(dataset[set]);
+            vector<float> expected=vector<float>(outputSize);
+            expected[dataset[set][dataset[set].size()-1]]=1;
+            errorSum+=cost(expected,outputs);
+            backwardPropagate(expected);
+            updateWeights(dataset[set],rate);
         }
+        cout <<"ERROR: "<< errorSum << endl;
+    }
+}
+
+void display(){
+    for(int x=0;x<network.size();x++){
+        for(int y=0;y<network[x].size();y++){
+            cout << network[x][y].output << " ";
+        }
+        cout << endl;
+        for(int y=0;y<network[x].size();y++){
+            cout << "[ ";
+            for(int i=0;i<network[x][y].weights.size();i++){
+                int maximum=network[x][y].weights.size()-1;
+                cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
+            }
+            cout << "] ";
+        }
+        cout << endl;
     }
 }
 
