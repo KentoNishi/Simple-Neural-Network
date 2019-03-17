@@ -3,7 +3,8 @@
         "array": "cpp",
         "cmath": "cpp",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iosfwd": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true

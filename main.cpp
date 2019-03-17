@@ -41,6 +41,9 @@ class NeuralNet{
             initNet(inputSize,hiddenCount,hiddenSize,outputSize);
             trainNet(dataset,rate,epoch,error,outputSize);
         }
+        NeuralNet(){
+
+        }
         float activate(vector<float> weights, vector<float> inputs){
             float activation=weights[weights.size()-1];
             for(int i=0;i<weights.size()-1;i++){
@@ -165,7 +168,7 @@ class NeuralNet{
                     backwardPropagate(expected);
                     updateWeights(dataset[set],rate);
                 }
-                cout <<">Epoch: "<<iter<<", Rate: "<<rate<<", Error: "<<errorSum<< endl;
+                cout <<"Epoch: "<<iter<<", Rate: "<<rate <<", Minimum Error: " << minError <<", Error: "<<errorSum<< endl;
             }
         }
 
@@ -190,13 +193,21 @@ class NeuralNet{
                 cout << endl;
             }
         }
-        vector<float> test(vector<float> testCase){
-            return forwardPropagate({2,1,1});
+        pair<vector<float>,pair<int,float>> test(vector<float> testCase){
+            vector<float> result=forwardPropagate(testCase);
+            int id=0;
+            for(int i=1;i<result.size();i++){
+                if(result[i]>result[id]){
+                    id=i;
+                }
+            }
+            return make_pair(result,make_pair(id,testCase[testCase.size()-1]));
         }
 };
 
 int main(){
-    vector<vector<float>> dataset = {
+    vector<vector<float>> dataset;
+    /* sample case = {
         {2.7810836,2.550537003,0},
         {1.465489372,2.362125076,0},
         {3.396561688,4.400293529,0},
@@ -207,16 +218,24 @@ int main(){
         {6.922596716,1.77106367,1},
         {8.675418651,-0.242068655,1},
         {7.673756466,3.508563011,1}
-    };
+    };*/
+    for(int i=0;i<100;i++){
+        float num=rand()%10-5;
+        dataset.push_back({num, int(num)%2==0?2*num:(rand()%10-5),float(int(num)%2==0?1:0)});
+    }
     Parameters params=Parameters();
     params.epoch=100000;
     params.error=0.001;
     params.rate=0.1;
-    NeuralNet network=NeuralNet(dataset,{1,1,1},params);
-    vector<float> test=network.test({2,1,1});
-    for(int i=0;i<test.size();i++){
-        cout << network.outputSet[i] << ": "<< test[i]*100 << "% ";
+    NeuralNet network=NeuralNet(dataset,{10,10},params);
+    for(int k=0;k<10000;k++){
+        float num=rand()%10-5;
+        pair<vector<float>,pair<int,float>> test=network.test({num, int(num)%2==0?2*num:(rand()%10-5),float(int(num)%2==0?1:0)});
+        cout << (test.second.second==network.outputSet[test.second.first]?"[OK]":"[NG]") << " ";
+        for(int i=0;i<test.first.size();i++){
+            cout << network.outputSet[i] << ": "<< test.first[i]*100 << "%   ";
+        }
+        cout << " Expected: " << test.second.second << ", returned: "<<network.outputSet[test.second.first] << endl;
     }
-    cout << endl;
     return 0;
 }
