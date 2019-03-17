@@ -8,6 +8,12 @@
 #include <cmath>
 using namespace std;
 
+struct Parameters{
+    float rate;
+    int epoch;
+    float error;
+};
+
 struct Node{
     vector<float> weights;
     float output;
@@ -16,8 +22,12 @@ struct Node{
 
 class NeuralNet{
     public:
-        vector<vector<Node>> network;
-        NeuralNet(vector<vector<float>> dataset,vector<int> layout,float rate, int epoch, float error){
+        vector<vector<Node>> model;
+        vector<float> outputSet;
+        NeuralNet(vector<vector<float>> dataset,vector<int> layout,Parameters params){
+            float rate=params.rate;
+            int epoch=params.epoch;
+            float error=params.error;
             set<float> outputTypes;
             for(int i=0;i<dataset.size();i++){
                 outputTypes.insert(dataset[i][dataset[i].size()-1]);
@@ -26,8 +36,8 @@ class NeuralNet{
             int outputSize=outputTypes.size();
             int hiddenCount=layout.size();
             vector<int> hiddenSize=layout;
-            vector<float> outputVector=vector<float>(outputTypes.size());
-            copy(outputTypes.begin(), outputTypes.end(), outputVector.begin());
+            outputSet=vector<float>(outputTypes.size());
+            copy(outputTypes.begin(), outputTypes.end(), outputSet.begin());
             initNet(inputSize,hiddenCount,hiddenSize,outputSize);
             trainNet(dataset,rate,epoch,error,outputSize);
         }
@@ -52,12 +62,12 @@ class NeuralNet{
                 cout << inputs[i] << " ";
             }
             cout << endl;*/
-            for(int x=0;x<network.size();x++){
+            for(int x=0;x<model.size();x++){
                 vector<float> newInputs;
-                for(int y=0;y<network[x].size();y++){
-                    float activation=activate(network[x][y].weights,inputs);
-                    network[x][y].output=transfer(activation);
-                    newInputs.push_back(network[x][y].output);
+                for(int y=0;y<model[x].size();y++){
+                    float activation=activate(model[x][y].weights,inputs);
+                    model[x][y].output=transfer(activation);
+                    newInputs.push_back(model[x][y].output);
                 }
                 inputs=newInputs;
             }
@@ -65,23 +75,23 @@ class NeuralNet{
         }
 
         void backwardPropagate(vector<float> expected){
-            for(int x=network.size()-1;x>=0;x--){
+            for(int x=model.size()-1;x>=0;x--){
                 vector<float> errors;
-                if(x!=network.size()-1){
-                    for(int y=0;y<network[x].size();y++){
+                if(x!=model.size()-1){
+                    for(int y=0;y<model[x].size();y++){
                         float error=0;
-                        for(int k=0;k<network[x+1].size();k++){
-                            error+=network[x+1][k].weights[y]*network[x+1][k].delta;
+                        for(int k=0;k<model[x+1].size();k++){
+                            error+=model[x+1][k].weights[y]*model[x+1][k].delta;
                         }
                         errors.push_back(error);
                     }
                 }else{
-                    for(int y=0;y<network[x].size();y++){
-                        errors.push_back(expected[y]-network[x][y].output);
+                    for(int y=0;y<model[x].size();y++){
+                        errors.push_back(expected[y]-model[x][y].output);
                     }
                 }
-                for(int y=0;y<network[x].size();y++){
-                    network[x][y].delta=errors[y]*derivative(network[x][y].output);
+                for(int y=0;y<model[x].size();y++){
+                    model[x][y].delta=errors[y]*derivative(model[x][y].output);
                 }
             }
         }
@@ -95,24 +105,25 @@ class NeuralNet{
             vector<vector<Node>> hiddenLayers;
             for(int layer=0;layer<hiddenCount;layer++){
                 hiddenLayers.push_back({});
-                for(int i=0;i<hiddenSize[0];i++){
+                for(int i=0;i<hiddenSize[layer];i++){
                     hiddenLayers[layer].push_back(Node());
                     for(int k=0;k<=inputSize;k++){
                         hiddenLayers[layer][i].weights.push_back(randomFloat());
                     }
                 }
+                inputSize=hiddenSize[layer];
             }
             for(int i=0;i<hiddenLayers.size();i++){
-                network.push_back(hiddenLayers[i]);
+                model.push_back(hiddenLayers[i]);
             }
             vector<Node> outputLayer;
             for(int i=0;i<outputSize;i++){
                 outputLayer.push_back(Node());
-                for(int k=0;k<=hiddenSize[i];k++){
+                for(int k=0;k<=hiddenSize[hiddenSize.size()-1];k++){
                     outputLayer[i].weights.push_back(randomFloat());
                 }
             }
-            network.push_back(outputLayer);
+            model.push_back(outputLayer);
         }
 
         float cost(vector<float> expected,vector<float> outputs){
@@ -126,18 +137,18 @@ class NeuralNet{
         void updateWeights(vector<float> data, float rate){
             vector<float> inputs=data;
             inputs.erase(inputs.end()-1);
-            for(int x=0;x<network.size();x++){
+            for(int x=0;x<model.size();x++){
                 if(x!=0){
                     inputs={};
-                    for(int k=0;k<network[x-1].size();k++){
-                        inputs.push_back(network[x-1][k].output);
+                    for(int k=0;k<model[x-1].size();k++){
+                        inputs.push_back(model[x-1][k].output);
                     }
                 }
-                for(int y=0;y<network[x].size();y++){
+                for(int y=0;y<model[x].size();y++){
                     for(int k=0;k<inputs.size();k++){
-                        network[x][y].weights[k]+=rate*network[x][y].delta*inputs[k];
+                        model[x][y].weights[k]+=rate*model[x][y].delta*inputs[k];
                     }
-                    network[x][y].weights[network[x][y].weights.size()-1]+=rate*network[x][y].delta;
+                    model[x][y].weights[model[x][y].weights.size()-1]+=rate*model[x][y].delta;
                 }
             }
         }
@@ -159,21 +170,28 @@ class NeuralNet{
         }
 
         void display(){
-            for(int x=0;x<network.size();x++){
-                for(int y=0;y<network[x].size();y++){
-                    cout << network[x][y].output << " ";
-                }
-                cout << endl;
-                for(int y=0;y<network[x].size();y++){
+            for(int i=0;i<model[0][0].weights.size()-1;i++){
+                cout << "(-) ";
+            }
+            cout << endl;
+            for(int x=0;x<model.size();x++){
+                for(int y=0;y<model[x].size();y++){
                     cout << "[ ";
-                    for(int i=0;i<network[x][y].weights.size();i++){
-                        int maximum=network[x][y].weights.size()-1;
-                        cout << (i==maximum?"{":"(") <<network[x][y].weights[i] << (i==maximum?"} ":") ");
+                    for(int i=0;i<model[x][y].weights.size();i++){
+                        int maximum=model[x][y].weights.size()-1;
+                        cout << (i==maximum?"{":"(") <<model[x][y].weights[i] << (i==maximum?"} ":") ");
                     }
                     cout << "] ";
                 }
                 cout << endl;
+                for(int y=0;y<model[x].size();y++){
+                    cout << "(-)"<<" ";
+                }
+                cout << endl;
             }
+        }
+        vector<float> test(vector<float> testCase){
+            return forwardPropagate({2,1,1});
         }
 };
 
@@ -190,6 +208,15 @@ int main(){
         {8.675418651,-0.242068655,1},
         {7.673756466,3.508563011,1}
     };
-    NeuralNet net=NeuralNet(dataset,{2,2},0.1,0,0.001);
+    Parameters params=Parameters();
+    params.epoch=100000;
+    params.error=0.001;
+    params.rate=0.1;
+    NeuralNet network=NeuralNet(dataset,{1,1,1},params);
+    vector<float> test=network.test({2,1,1});
+    for(int i=0;i<test.size();i++){
+        cout << network.outputSet[i] << ": "<< test[i]*100 << "% ";
+    }
+    cout << endl;
     return 0;
 }
