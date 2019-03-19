@@ -221,7 +221,7 @@ int main(){
     };*/
     for(int i=0;i<100;i++){
         float num=rand()%10-5;
-        dataset.push_back({num, int(num)%2==0?2*num:(rand()%10-5),float(int(num)%2==0?1:0)});
+        dataset.push_back({num, int(num)%2==0?pow(num,2):(rand()%10-5),float(int(num)%2==0?1:0)});
     }
     Parameters params=Parameters();
     params.epoch=100000;
@@ -230,7 +230,7 @@ int main(){
     NeuralNet network=NeuralNet(dataset,{10,10},params);
     for(int k=0;k<10000;k++){
         float num=rand()%10-5;
-        pair<vector<float>,pair<int,float>> test=network.test({num, int(num)%2==0?2*num:(rand()%10-5),float(int(num)%2==0?1:0)});
+        pair<vector<float>,pair<int,float>> test=network.test({num, int(num)%2==0?pow(num,2):(rand()%10-5),float(int(num)%2==0?1:0)});
         cout << (test.second.second==network.outputSet[test.second.first]?"[OK]":"[NG]") << " ";
         for(int i=0;i<test.first.size();i++){
             cout << network.outputSet[i] << ": "<< test.first[i]*100 << "%   ";
