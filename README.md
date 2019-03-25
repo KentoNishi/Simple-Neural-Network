@@ -19,5 +19,5 @@ Download "result" from  the master branch, and execute the file.
 ## Usage
 
 ```
-Todo
+TODO: Custom inputs for testing
 ```
