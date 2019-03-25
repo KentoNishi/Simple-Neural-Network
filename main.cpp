@@ -228,8 +228,8 @@ int main(){
     params.epoch=100000;
     params.error=0.001;
     params.rate=0.1;
-    NeuralNet network=NeuralNet(dataset,{10,10},params);
-    for(int k=0;k<10000;k++){
+    NeuralNet network=NeuralNet(dataset,{7,7},params);
+    for(int k=0;k<100;k++){
         float num=rand()%10-5;
         pair<vector<float>,pair<int,float>> test=network.test({num, int(num)%2==0?float(pow(num,2)):(rand()%10-5),float(int(num)%2==0?1:0)});
         cout << (test.second.second==network.outputSet[test.second.first]?"[OK]":"[NG]") << " ";
