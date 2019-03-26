@@ -13,11 +13,11 @@ git clone https://github.com/KentoNishi/Simple-Neural-Network.git
 Navigate to the root directory of the repository.
 
 The directory contains the following configuration files:
-| Filename      | Type          | Description |
-| ------------- |:-------------:|:------------|
-| "config.in"   | Configuration | Contains information about the network configuration. |
-| "dataset.in"  | Input         | Contains the training dataset for the network. |
-| "tests.in"    | Input         | Contains test cases for the network to try after training.
+| Filename      | Type          | Description                                               |
+| ------------- |:-------------:|:----------------------------------------------------------|
+| "config.in"   | Configuration | Contains information about the network configuration.     |
+| "dataset.in"  | Input         | Contains the training dataset for the network.            |
+| "tests.in"    | Input         | Contains test cases for the network to try after training.|
 
 ### config.in:
 ```
@@ -56,7 +56,6 @@ Example:
 ## Execution
 
 Navigate to the root directory of the repository.
-Run the following command:
 
 ```
 ./run
