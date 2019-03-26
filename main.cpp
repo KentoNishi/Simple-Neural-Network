@@ -9,6 +9,24 @@
 #include <thread>
 using namespace std;
 
+vector<string> split(string str, string character){
+    vector<string> result;
+    long long s=0;
+    long long i=0;
+    while(i<str.length()){
+        if(str[i]==character[0]||i==str.length()-1){
+            long long x=i-s;
+            if(i==str.length()-1){
+                x++;
+            }
+            result.push_back(str.substr(s,x));
+            s=i+1;
+        }
+        i++;
+    }
+    return result;
+}
+
 struct Parameters{
     float rate;
     int epoch;
@@ -19,6 +37,11 @@ struct Node{
     vector<float> weights;
     float output;
     float delta;
+};
+
+struct Case{
+    vector<float> outputs;
+    int answer;
 };
 
 class NeuralNet{
@@ -194,7 +217,7 @@ class NeuralNet{
                 cout << endl;
             }
         }
-        pair<vector<float>,pair<int,float>> test(vector<float> testCase){
+        Case test(vector<float> testCase){
             vector<float> result=forwardPropagate(testCase);
             int id=0;
             for(int i=1;i<result.size();i++){
@@ -202,41 +225,60 @@ class NeuralNet{
                     id=i;
                 }
             }
-            return make_pair(result,make_pair(id,testCase[testCase.size()-1]));
+            Case output=Case();
+            output.outputs=result;
+            output.answer=id;
+            return output;
         }
 };
 
 int main(){
     vector<vector<float>> dataset;
-    /* sample case = {
-        {2.7810836,2.550537003,0},
-        {1.465489372,2.362125076,0},
-        {3.396561688,4.400293529,0},
-        {1.38807019,1.850220317,0},
-        {3.06407232,3.005305973,0},
-        {7.627531214,2.759262235,1},
-        {5.332441248,2.088626775,1},
-        {6.922596716,1.77106367,1},
-        {8.675418651,-0.242068655,1},
-        {7.673756466,3.508563011,1}
-    };*/
-    for(int i=0;i<100;i++){
-        float num=rand()%10-5;
-        dataset.push_back({num, int(num)%2==0?float(pow(num,2)):(rand()%10-5),float(int(num)%2==0?1:0)});
+    ifstream datain ("dataset.in");
+    ifstream testin ("tests.in");
+    ifstream configin ("config.in");
+    vector<string> dataIn;
+    vector<string> testIn;
+    vector<string> configIn;
+    vector<int> layerCounts;
+    string contents;
+    while(getline(datain,contents)) {
+        dataIn.push_back(contents);
+    }
+    while(getline(testin,contents)) {
+        testIn.push_back(contents);
+    }
+    while(getline(configin,contents)) {
+        configIn.push_back(contents);
+    }
+    for(int i=0;i<dataIn.size();i++){
+        vector<string> line=split(dataIn[i]," ");
+        vector<float> dataCase;
+        for(int k=0;k<line.size();k++){
+            dataCase.push_back(stof(line[k]));
+        }
+        dataset.push_back(dataCase);
     }
     Parameters params=Parameters();
-    params.epoch=100000;
-    params.error=0.001;
-    params.rate=0.1;
-    NeuralNet network=NeuralNet(dataset,{7,7},params);
-    for(int k=0;k<100;k++){
-        float num=rand()%10-5;
-        pair<vector<float>,pair<int,float>> test=network.test({num, int(num)%2==0?float(pow(num,2)):(rand()%10-5),float(int(num)%2==0?1:0)});
-        cout << (test.second.second==network.outputSet[test.second.first]?"[OK]":"[NG]") << " ";
-        for(int i=0;i<test.first.size();i++){
-            cout << network.outputSet[i] << ": "<< test.first[i]*100 << "%   ";
-        }
-        cout << " Expected: " << test.second.second << ", returned: "<<network.outputSet[test.second.first] << endl;
+    params.epoch=stoi(configIn[0]);
+    params.error=stof(configIn[1]);
+    params.rate=stof(configIn[2]);
+    vector<string> splitLayers=split(configIn[3]," ");
+    for(int i=0;i<splitLayers.size();i++){
+        layerCounts.push_back(stoi(splitLayers[i]));
     }
+    NeuralNet network=NeuralNet(dataset,layerCounts,params);
+    for(int i=0;i<testIn.size();i++){
+        vector<string> line=split(testIn[i]," ");
+        vector<float> testCase;
+        for(int k=0;k<line.size();k++){
+            testCase.push_back(stof(line[k]));
+        }
+        Case result=network.test(testCase);
+        float expected=testCase[testCase.size()-1];
+        string status=network.outputSet[result.answer]==expected?"[OK]":"[NG]";
+        cout << status << " Result: " << network.outputSet[result.answer] << ", Expected: " << expected << endl;
+    }
+
     return 0;
 }
