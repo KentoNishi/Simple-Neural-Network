@@ -13,6 +13,7 @@ git clone https://github.com/KentoNishi/Simple-Neural-Network.git
 Navigate to the root directory of the repository.
 
 The directory contains the following configuration files:
+
 | Filename      | Type          | Description                                               |
 | ------------- |:-------------:|:----------------------------------------------------------|
 | "config.in"   | Configuration | Contains information about the network configuration.     |
