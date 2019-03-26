@@ -56,6 +56,7 @@ Example:
 ## Execution
 
 Navigate to the root directory of the repository.
+Run the following command:
 
 ```
 ./run
