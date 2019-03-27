@@ -36,6 +36,9 @@ Example:
 ```
 
 ### dataset.in:
+
+Each line in the file represents a data sample in the following format:
+
 ```
 [space separated int/float list of input values] [expected int/float result]
 ```
@@ -45,6 +48,9 @@ Example:
 ``
 
 ### tests.in:
+
+Each line in the file represents a test case in the following format:
+
 ```
 [space separated int/float list of input values] [expected int/float result]
 ```
