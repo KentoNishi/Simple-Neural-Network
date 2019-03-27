@@ -62,6 +62,9 @@ class NeuralNet{
             vector<int> hiddenSize=layout;
             outputSet=vector<float>(outputTypes.size());
             copy(outputTypes.begin(), outputTypes.end(), outputSet.begin());
+            for(int i=0;i<dataset.size();i++){
+                dataset[i][dataset[i].size()-1]=distance(outputSet.begin(),find(outputSet.begin(),outputSet.end(),dataset[i][dataset[i].size()-1]));
+            }
             initNet(inputSize,hiddenCount,hiddenSize,outputSize);
             trainNet(dataset,rate,epoch,error,outputSize);
         }
@@ -84,11 +87,7 @@ class NeuralNet{
             return out*(1-out);
         }
 
-        vector<float> forwardPropagate(vector<float> inputs){/*
-            for(int i=0;i<inputs.size();i++){
-                cout << inputs[i] << " ";
-            }
-            cout << endl;*/
+        vector<float> forwardPropagate(vector<float> inputs){
             for(int x=0;x<model.size();x++){
                 vector<float> newInputs;
                 for(int y=0;y<model[x].size();y++){
@@ -155,6 +154,7 @@ class NeuralNet{
 
         float cost(vector<float> expected,vector<float> outputs){
             float total=0;
+//            cout << "in cost function" << endl;
             for(int i=0;i<expected.size();i++){
                 total+=pow(expected[i]-outputs[i],2);
             }

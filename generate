@@ -1,0 +1,2 @@
+#!/bin/bash
+g++ generate.cpp -g -o result;./result;rm result;

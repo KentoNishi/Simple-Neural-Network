@@ -53,6 +53,15 @@ Example:
 7.673756466 3.508563011 1
 ``
 
+## Customizations
+
+Navigate to the root directory of the repository, then execute the following command.
+```
+./generate
+```
+This command will compile and run `generate.cpp` to create a custom dataset.
+Editing `generate.cpp` will enable you to create your own datasets to train and test the neural network.
+
 
 ## Execution
 
@@ -61,3 +70,8 @@ Navigate to the root directory of the repository, then execute the following com
 ```
 ./run
 ```
+
+The network will automatically train on the dataset until it reaches the maximum epoch or reaches the minimum error.
+
+## Issues
+* Performance issues. Highly unoptimized and slow, with no parallel processing.
