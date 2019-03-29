@@ -4,7 +4,8 @@
         "cmath": "cpp",
         "iostream": "cpp",
         "ostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "chrono": "cpp"
     },
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true

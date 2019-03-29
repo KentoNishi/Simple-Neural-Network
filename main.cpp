@@ -7,7 +7,9 @@
 #include <array>
 #include <cmath>
 #include <thread>
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
 
 vector<string> split(string str, string character){
     vector<string> result;
@@ -184,6 +186,7 @@ class NeuralNet{
             float errorSum=-1;
             for(int iter=0;(iter<epoch||epoch==0)&&(errorSum==-1||errorSum>minError||minError==0);iter++){
                 errorSum=0;
+                high_resolution_clock::time_point t1 = high_resolution_clock::now();
                 for(int set=0;set<dataset.size();set++){
                     vector<float> outputs=forwardPropagate(dataset[set]);
                     vector<float> expected=vector<float>(outputSize);
@@ -192,7 +195,9 @@ class NeuralNet{
                     backwardPropagate(expected);
                     updateWeights(dataset[set],rate);
                 }
-                cout <<"Epoch: "<<iter<<", Rate: "<<rate <<", Minimum Error: " << minError <<", Error: "<<errorSum<< endl;
+                high_resolution_clock::time_point t2 = high_resolution_clock::now();
+                auto duration = duration_cast<microseconds>( t2 - t1 ).count();
+                cout <<"Epoch: "<<iter<<", Rate: "<<rate <<", Minimum Error: " << minError <<", Error: "<<errorSum << ", Time: " << duration << "ms" << endl;
             }
         }
 
