@@ -81,3 +81,4 @@ The network will automatically train on the dataset until it reaches the maximum
 
 ## Issues
 * Performance issues. Highly unoptimized and slow, with no parallel processing.
+* No save or backup features. Data can be easily lost.
