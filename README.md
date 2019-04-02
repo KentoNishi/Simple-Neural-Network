@@ -1,6 +1,6 @@
 # Simple Neural Network
 
-Simple neural network implementation in C++ by Kento Nishi.
+Simple neural network implementation in C++.
 
 ## Download
 Clone the repository with git.
