@@ -1,10 +1,14 @@
 # Simple-Neural-Network-v2
-A cleaner and more refined re-write of the original [Simple Neural Network](https://github.com/KentoNishi/Simple-Neural-Network) project, with new autosaving features.
+A cleaner and more refined re-write of the original [Simple Neural Network](https://github.com/KentoNishi/Simple-Neural-Network/tree/v1) project, with new autosaving features.
 
 ## Download
 Clone the repository with git.
 ```
-git clone https://github.com/KentoNishi/Simple-Neural-Network-v2.git
+git clone https://github.com/KentoNishi/Simple-Neural-Network.git
+```
+Switch to the v2 branch.
+```
+git checkout v2
 ```
 
 ## Files
@@ -54,9 +58,6 @@ Compile and run the desired program.
 ```
 g++ main.cpp -o result;./result;rm result;
 ```
-
-## Issues
-* The autosaving network has problems with large dataset outputs types.
 
 ## Other Information
 * To learn more about neural networks, check out [this article](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) about backpropagation.
