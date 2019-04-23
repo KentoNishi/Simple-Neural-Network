@@ -1,10 +1,14 @@
-# Simple-Neural-Network-v2
-A cleaner and more refined re-write of the original [Simple Neural Network](https://github.com/KentoNishi/Simple-Neural-Network) project, with new autosaving features.
+# Simple-Neural-Network-v3
+Inclusion of biases, on top of the [Simple Neural Network v2](https://github.com/KentoNishi/Simple-Neural-Network/tree/v2) project.
 
 ## Download
 Clone the repository with git.
 ```
-git clone https://github.com/KentoNishi/Simple-Neural-Network-v2.git
+git clone https://github.com/KentoNishi/Simple-Neural-Network.git
+```
+Switch to the v3 branch.
+```
+git checkout v3
 ```
 
 ## Files
