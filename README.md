@@ -14,8 +14,6 @@ git checkout v3
 ## Files
 ``main.cpp`` in the root directory contains the basic code for the neural network.
 
-``autosaving`` contains the network with autosaving modifications.
-
 ## Breakdown
 ### Basic Network
 The ``main`` function serves the following purposes.
@@ -35,23 +33,11 @@ int main(){ // function definition
     ... // data formatting for processing
     // layer configurations can be specified by a vector of integers.
     // layer configurations do not include the input and output layers.
-    network.init(samples,{2,2}); // initialize the network with the vector of samples and a layer configuration
+    network.init(samples,{5,5}); // initialize the network with the vector of samples and a layer configuration
     network.train(0.1,0.001); // Specify a learning rate and minimum error value.
     return 0; // exit the program
 } // end function
 ```
-### Autosave Network
-The autosave network has only one difference in the ``main`` function from the basic network.
-Replace the following code:
-```
-network.init(samples,{2,2});
-network.train(0.1,0.001);
-```
-with this line:
-```
-network.run(samples,{2,2},0.1,0.001);
-```
-The new line will attempt to find a backup file, but will fall back to the specified parameters.
 
 ## Execution
 Compile and run the desired program.
