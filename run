@@ -1,2 +1,0 @@
-#!/bin/bash
-g++ main.cpp -g -o result;./result;rm result;
