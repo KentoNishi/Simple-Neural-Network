@@ -35,7 +35,7 @@ int main(){ // function definition
     ... // data formatting for processing
     // layer configurations can be specified by a vector of integers.
     // layer configurations do not include the input and output layers.
-    network.init(samples,{2,2}); // initialize the network with the vector of samples and a layer configuration
+    network.init(samples,{5,5}); // initialize the network with the vector of samples and a layer configuration
     network.train(0.1,0.001); // Specify a learning rate and minimum error value.
     return 0; // exit the program
 } // end function
