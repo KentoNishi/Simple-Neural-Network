@@ -7,7 +7,10 @@ Clone the repository with git.
 ```
 git clone https://github.com/KentoNishi/Simple-Neural-Network.git
 ```
-
+Switch to the v1 branch.
+```
+git checkout v1
+```
 ## Setup
 
 Navigate to the root directory of the repository.
