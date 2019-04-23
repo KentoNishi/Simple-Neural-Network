@@ -1,86 +1,62 @@
-# Simple Neural Network
-
-Simple neural network implementation in C++.
+# Simple-Neural-Network-v2
+A cleaner and more refined re-write of the original [Simple Neural Network](https://github.com/KentoNishi/Simple-Neural-Network) project, with new autosaving features.
 
 ## Download
 Clone the repository with git.
 ```
-git clone https://github.com/KentoNishi/Simple-Neural-Network.git
+git clone https://github.com/KentoNishi/Simple-Neural-Network-v2.git
 ```
 
-## Setup
+## Files
+``main.cpp`` in the root directory contains the basic code for the neural network.
 
-Navigate to the root directory of the repository.
+``autosaving`` contains the network with autosaving modifications.
 
-The directory contains the following configuration files:
-
-| Filename      | Type          | Description                                               |
-| ------------- |:-------------:|:----------------------------------------------------------|
-| "config.in"   | Configuration | Contains information about the network configuration.     |
-| "dataset.in"  | Input         | Contains the training dataset for the network.            |
-| "tests.in"    | Input         | Contains test cases for the network to try after training.|
-
-### config.in:
+## Breakdown
+### Basic Network
+The ``main`` function serves the following purposes.
+```cpp
+int main(){ // function definition
+    Network network=Network(); // create network
+    vector<Sample> samples; // list of samples
+    set<int> classSet; // a set (ordered list with no duplicates) of output types
+    // custom datasets can be created in the following loop.
+    for(int i=0;i<10;i++){ // generate 10 samples
+        int a=rand()%2; // random number a
+        int b=rand()%2; // random number b
+        int c=(a&b); // binary and operation
+        Sample sample=Sample({float(a),float(b)},c); // list of float input values, one output value
+        samples.push_back(sample); // push back sample to list
+    }
+    ... // data formatting for processing
+    // layer configurations can be specified by a vector of integers.
+    // layer configurations do not include the input and output layers.
+    network.init(samples,{2,2}); // initialize the network with the vector of samples and a layer configuration
+    network.train(0.1,0.001); // Specify a learning rate and minimum error value.
+    return 0; // exit the program
+} // end function
 ```
-1. Maximum epoch
-2. Minimum average error
-3. Learning rate
-4. Hidden layer configuration (space separated integer list)
+### Autosave Network
+The autosave network has only one difference in the ``main`` function from the basic network.
+Replace the following code:
 ```
-Example:
+network.init(samples,{2,2});
+network.train(0.1,0.001);
 ```
-10000
-0.001
-0.01
-10 10
+with this line:
 ```
-
-### dataset.in:
-
-Each line in the file represents a data sample in the following format:
-
+network.run(samples,{2,2},0.1,0.001);
 ```
-[space separated int/float list of input values] [expected int/float result]
-```
-Example:
-``
-2.7810836 2.550537003 0
-``
-
-### tests.in:
-
-Each line in the file represents a test case in the following format:
-
-```
-[space separated int/float list of input values] [expected int/float result]
-```
-Example:
-``
-7.673756466 3.508563011 1
-``
-
-## Customizations
-
-Navigate to the root directory of the repository, then execute the following command.
-```
-./generate
-```
-This command will compile and run `generate.cpp` to create a custom dataset.
-Editing `generate.cpp` will enable you to create your own datasets to train and test the neural network.
-
+The new line will attempt to find a backup file, but will fall back to the specified parameters.
 
 ## Execution
-
-Navigate to the root directory of the repository, then execute the following command.
-
+Compile and run the desired program.
 ```
-./run
+g++ main.cpp -o result;./result;rm result;
 ```
-
-The network will automatically train on the dataset until it reaches the maximum epoch or reaches the minimum error.
 
 ## Issues
-* Performance issues. Highly unoptimized and slow, with no parallel processing.
-* No save or backup features. Data can be easily lost.
-* The code uses stochastic gradient descent, causing speed issues.
-* The code uses sigmoid activation functions, causing speed issues.
+* The autosaving network has problems with large dataset outputs types.
+
+## Other Information
+* To learn more about neural networks, check out [this article](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/) about backpropagation.
